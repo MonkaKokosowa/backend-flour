@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/rs/zerolog/log"
 
@@ -54,7 +55,7 @@ func StartWeb(app App) {
 	mux.HandleFunc("/mail", app.mailHandler)
 	// Configure CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{app.Env.WebServer.AllowedOrigins}, // Adjust this to your frontend's origin
+		AllowedOrigins:   strings.Split(app.Env.WebServer.AllowedOrigins, ","), // Adjust this to your frontend's origin
 		AllowedMethods:   []string{"POST"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
