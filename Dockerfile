@@ -34,3 +34,7 @@ USER appuser
 
 # Command to run the binary
 CMD ["./backend-flour"]
+
+LABEL org.opencontainers.image.source=https://github.com/MonkaKokosowa/backend-flour
+LABEL org.opencontainers.image.description="This image is responsible for handling backend of my personal website (wheatflour.pl). As of writing this it's supporting sending mail and in future it will support blog posting and commenting capabilities."
+LABEL org.opencontainers.image.licenses=GPL-3.0-only
