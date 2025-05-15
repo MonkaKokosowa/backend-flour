@@ -24,3 +24,10 @@ Remember to rename .env-example file and fill it with your own values!
 If you find any bugs, please don't abuse them but just make a bug report at [the issues tab](https://github.com/MonkaKokosowa/backend-flour/issues). 
 There's not much to abuse anyways, it's just me here :p
 
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `go run cmd/server.go`             | Runs the server                            |
