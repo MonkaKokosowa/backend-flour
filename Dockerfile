@@ -14,11 +14,14 @@ RUN go mod download
 # Copy the source code
 COPY . .
 
-# Build the Go binary
-RUN go build -o backend-flour ./cmd/server.go
+# Build the Go binary with stripped debug info for smaller size
+RUN go build -ldflags="-s -w" -o backend-flour ./cmd/server.go
 
-# ---------- Final Stage ----------ya
+# ---------- Final Stage ----------
 FROM alpine:latest
+
+# Install ca-certificates (needed for HTTPS, email, etc)
+RUN apk add --no-cache ca-certificates
 
 # Create a non-root user (optional but recommended for security)
 RUN adduser -D -g '' appuser
@@ -29,12 +32,12 @@ WORKDIR /app
 # Copy the compiled binary from builder
 COPY --from=builder /app/backend-flour .
 
-# Set permissions
+# Set permissions: switch to non-root user
 USER appuser
 
-# Command to run the binary
+# Run the binary
 CMD ["./backend-flour"]
 
-LABEL org.opencontainers.image.source=https://github.com/MonkaKokosowa/backend-flour
+LABEL org.opencontainers.image.source="https://github.com/MonkaKokosowa/backend-flour"
 LABEL org.opencontainers.image.description="This image is responsible for handling backend of my personal website (wheatflour.pl). As of writing this it's supporting sending mail and in future it will support blog posting and commenting capabilities."
-LABEL org.opencontainers.image.licenses=GPL-3.0-only
+LABEL org.opencontainers.image.licenses="GPL-3.0-only"
