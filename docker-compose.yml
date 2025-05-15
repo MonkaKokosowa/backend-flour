@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend-flour
+    env_file: .env
+
+    ports:
+      - "4324:${PORT}"
+
+    restart: unless-stopped
