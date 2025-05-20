@@ -32,8 +32,8 @@ func (a *App) blogProxy(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	proxy := proxy.NewProxy(a.Env.Blog.FlatnotesURL)
-	proxy.ServeHTTP(w, r)
+	flatnotesProxy := proxy.NewProxy(a.Env.Blog.FlatnotesURL)
+	flatnotesProxy.ServeHTTP(w, r)
 }
 
 func (a *App) mailHandler(w http.ResponseWriter, r *http.Request) {
