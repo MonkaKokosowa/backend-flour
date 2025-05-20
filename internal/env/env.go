@@ -17,6 +17,9 @@ type Environment struct {
 		AllowedOrigins string `env:"ALLOWED_ORIGINS,required"`
 		Port           int    `env:"PORT,required"`
 	}
+	Blog struct {
+		FlatnotesURL string `env:"FLATNOTES_URL,required"`
+	}
 }
 
 // GetEnv initializes environment variables from .env file (if present) and returns them
