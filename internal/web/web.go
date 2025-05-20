@@ -4,20 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 	"strings"
 
 	"github.com/rs/zerolog/log"
 
 	env "github.com/MonkaKokosowa/backend-flour/internal/env"
 	"github.com/MonkaKokosowa/backend-flour/internal/mail"
-	"github.com/MonkaKokosowa/backend-flour/internal/proxy"
 	"github.com/rs/cors"
 	"gopkg.in/gomail.v2"
 )
 
 type App struct {
-	Env    *env.Environment
-	Dialer *gomail.Dialer
+	Env            *env.Environment
+	Dialer         *gomail.Dialer
+	FlatnotesProxy *httputil.ReverseProxy
 }
 
 type MailWebRequest struct {
@@ -32,8 +33,8 @@ func (a *App) blogProxy(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	flatnotesProxy := proxy.NewProxy(a.Env.Blog.FlatnotesURL)
-	flatnotesProxy.ServeHTTP(w, r)
+
+	a.FlatnotesProxy.ServeHTTP(w, r)
 }
 
 func (a *App) mailHandler(w http.ResponseWriter, r *http.Request) {
