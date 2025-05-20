@@ -27,7 +27,7 @@ type MailWebRequest struct {
 	Message string `json:"message"`
 }
 
-func (a *App) blogProxy(w http.ResponseWriter, r *http.Request) {
+func (a *App) blogProxyHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		log.Error().Msg("Method not allowed")
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -65,9 +65,9 @@ func StartWeb(app App) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/mail", app.mailHandler)
-	mux.HandleFunc("/api/notes/", app.blogProxy)
-	mux.HandleFunc("/api/attachments/", app.blogProxy)
-	mux.HandleFunc("/api/search", app.blogProxy)
+	mux.HandleFunc("/api/notes/", app.blogProxyHandler)
+	mux.HandleFunc("/api/attachments/", app.blogProxyHandler)
+	mux.HandleFunc("/api/search", app.blogProxyHandler)
 	// Configure CORS
 	c := cors.New(cors.Options{
 		AllowedOrigins:   strings.Split(app.Env.WebServer.AllowedOrigins, ","), // Adjust this to your frontend's origin
