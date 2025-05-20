@@ -27,6 +27,11 @@ type MailWebRequest struct {
 }
 
 func (a *App) blogProxy(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Error().Msg("Method not allowed")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	proxy := proxy.NewProxy(a.Env.Blog.FlatnotesURL)
 	proxy.ServeHTTP(w, r)
 }
