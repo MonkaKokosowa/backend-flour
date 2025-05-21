@@ -16,6 +16,13 @@ type Message struct {
 	Body    string
 }
 
+func LimitCharacters(input string, max int) string {
+	if len(input) > max {
+		return input[:max]
+	}
+	return input
+}
+
 func SendMail(dialer *gomail.Dialer, message Message) {
 	log.Info().Msg(fmt.Sprintf("Sending mail from: %s", message.From))
 	dialer.DialAndSend(compose_message(message))

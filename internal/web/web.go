@@ -54,10 +54,10 @@ func (a *App) mailHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Received user: %+v\n", mailRequest)
 
 	mail.SendMail(a.Dialer, mail.Message{
-		From:    mailRequest.Mail,
+		From:    mail.LimitCharacters(mailRequest.Mail, 80),
 		To:      a.Env.Dialer.To,
-		Subject: fmt.Sprintf("New message from: %s", mailRequest.Name),
-		Body:    mailRequest.Message,
+		Subject: fmt.Sprintf("New message from: %s", mail.LimitCharacters(mailRequest.Name, 50)),
+		Body:    mail.LimitCharacters(mailRequest.Message, 500),
 	})
 
 }
