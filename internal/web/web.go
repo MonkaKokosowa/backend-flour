@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 	"strings"
 
 	"github.com/rs/zerolog/log"
@@ -15,14 +16,25 @@ import (
 )
 
 type App struct {
-	Env    *env.Environment
-	Dialer *gomail.Dialer
+	Env            *env.Environment
+	Dialer         *gomail.Dialer
+	FlatnotesProxy *httputil.ReverseProxy
 }
 
 type MailWebRequest struct {
 	Name    string `json:"name"`
 	Mail    string `json:"email"`
 	Message string `json:"message"`
+}
+
+func (a *App) blogProxyHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Error().Msg("Method not allowed")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	a.FlatnotesProxy.ServeHTTP(w, r)
 }
 
 func (a *App) mailHandler(w http.ResponseWriter, r *http.Request) {
@@ -53,6 +65,9 @@ func StartWeb(app App) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/mail", app.mailHandler)
+	mux.HandleFunc("/api/notes/", app.blogProxyHandler)
+	mux.HandleFunc("/api/attachments/", app.blogProxyHandler)
+	mux.HandleFunc("/api/search", app.blogProxyHandler)
 	// Configure CORS
 	c := cors.New(cors.Options{
 		AllowedOrigins:   strings.Split(app.Env.WebServer.AllowedOrigins, ","), // Adjust this to your frontend's origin
