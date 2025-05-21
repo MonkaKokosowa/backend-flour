@@ -9,8 +9,12 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+type Address struct {
+	Name  string
+	Email string
+}
 type Message struct {
-	From    string
+	From    Address
 	To      string
 	Subject string
 	Body    string
@@ -40,7 +44,7 @@ func GetDialer(environment env.Environment) *gomail.Dialer {
 
 func compose_message(message Message) *gomail.Message {
 	m := gomail.NewMessage()
-	m.SetHeader("From", message.From)
+	m.SetHeader("From", fmt.Sprint(message.From.Name, " <", message.From.Email, ">"))
 	m.SetHeader("To", message.To)
 	m.SetHeader("Subject", message.Subject)
 	m.SetBody("text/html", sanitize.HTML(message.Body))
