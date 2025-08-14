@@ -47,6 +47,6 @@ func compose_message(message Message) *gomail.Message {
 	m.SetHeader("From", fmt.Sprintf("Website Backend ", environment.Dialer.User))
 	m.SetHeader("To", message.To)
 	m.SetHeader("Subject", message.Subject)
-	m.SetBody("text/html", sanitize.HTML(fmt.Sprintf("Message from ", message.From.Name, " <", message.From.Email, ">\n")message.Body))
+	m.SetBody("text/html", sanitize.HTML(fmt.Sprintf("Message from ", message.From.Name, " <", message.From.Email, ">\n", message.Body)))
 	return m
 }
