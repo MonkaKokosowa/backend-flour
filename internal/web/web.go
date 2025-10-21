@@ -12,12 +12,12 @@ import (
 	env "github.com/MonkaKokosowa/backend-flour/internal/env"
 	"github.com/MonkaKokosowa/backend-flour/internal/mail"
 	"github.com/rs/cors"
-	"gopkg.in/gomail.v2"
+	gomail "github.com/wneessen/go-mail"
 )
 
 type App struct {
 	Env            *env.Environment
-	Dialer         *gomail.Dialer
+	Client         *gomail.Client
 	FlatnotesProxy *httputil.ReverseProxy
 }
 
@@ -53,7 +53,7 @@ func (a *App) mailHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Received user: %+v\n", mailRequest)
 
-	mail.SendMail(a.Dialer, mail.Message{
+	mail.SendMail(a.Client, mail.Message{
 		From: mail.Address{
 			Name:  mail.LimitCharacters(mailRequest.Name, 80),
 			Email: mail.LimitCharacters(mailRequest.Mail, 80),

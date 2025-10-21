@@ -6,7 +6,7 @@ import (
 	"github.com/MonkaKokosowa/backend-flour/internal/env"
 	"github.com/mrz1836/go-sanitize"
 	"github.com/rs/zerolog/log"
-	"gopkg.in/gomail.v2"
+	gomail "github.com/wneessen/go-mail"
 )
 
 type Address struct {
@@ -27,29 +27,33 @@ func LimitCharacters(input string, max int) string {
 	return input
 }
 
-func SendMail(dialer *gomail.Dialer, message Message) {
+func SendMail(client *gomail.Client, message Message) {
 	log.Info().Msg(fmt.Sprintf("Sending mail from: %s", message.From))
-	err := dialer.DialAndSend(compose_message(message))
+	err := client.DialAndSend(compose_message(message))
 	if err != nil {
 		log.Error().Err(err)
 	}
 }
 
-func GetDialer(environment env.Environment) *gomail.Dialer {
-	d := gomail.NewDialer(
+func GetClient(environment env.Environment) *gomail.Client {
+	client, err := gomail.NewClient(
 		environment.Dialer.Server,
-		environment.Dialer.Port,
-		environment.Dialer.Username,
-		environment.Dialer.Password,
+		gomail.WithSMTPAuth(gomail.SMTPAuthPlain),
+		gomail.WithUsername(environment.Dialer.Username),
+		gomail.WithPassword(environment.Dialer.Password),
+		gomail.WithPort(environment.Dialer.Port),
 	)
-	return d
+	if err != nil {
+		log.Error().Err(err)
+	}
+	return client
 }
 
-func compose_message(message Message) *gomail.Message {
-	m := gomail.NewMessage()
-	m.SetHeader("From", "Website Backend <website.backend@wheatflour.pl")
-	m.SetHeader("To", message.To)
-	m.SetHeader("Subject", message.Subject)
-	m.SetBody("text/html", sanitize.HTML(fmt.Sprintf("Message from ", message.From.Name, " <", message.From.Email, ">\n", message.Body)))
+func compose_message(message Message) *gomail.Msg {
+	m := gomail.NewMsg()
+	m.SetAddrHeader(gomail.HeaderFrom, "Website Backend <"+message.To+">")
+	m.SetAddrHeader(gomail.HeaderTo, message.To)
+	m.Subject(message.Subject)
+	m.SetBodyString(gomail.TypeTextHTML, sanitize.HTML("Message from "+message.From.Name+" <"+message.From.Email+">"+"\n"+message.Body))
 	return m
 }

@@ -16,7 +16,7 @@ func main() {
 	}
 	app := &web.App{
 		Env:            &environment,
-		Dialer:         mail.GetDialer(environment),
+		Client:         mail.GetClient(environment),
 		FlatnotesProxy: proxy.NewProxy(environment.Blog.FlatnotesURL),
 	}
 
