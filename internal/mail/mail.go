@@ -57,6 +57,6 @@ func compose_message(message Message) *gomail.Msg {
 	m.SetAddrHeader(gomail.HeaderFrom, "Website Backend <"+message.User+">")
 	m.To(message.To)
 	m.Subject(message.Subject)
-	m.SetBodyString(gomail.TypeTextPlain, sanitize.HTML("Message from "+message.From.Name+" <"+message.From.Email+">"+"\n"+message.Body))
+	m.SetBodyString(gomail.TypeTextPlain, sanitize.HTML("Message from "+message.From.Name+" "+message.From.Email+""+"\n\n"+message.Body))
 	return m
 }
