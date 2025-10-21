@@ -29,7 +29,10 @@ func LimitCharacters(input string, max int) string {
 
 func SendMail(client *gomail.Client, message Message) {
 	log.Info().Msg(fmt.Sprintf("Sending mail from: %s", message.From))
+	log.Info().Msg(fmt.Sprintf("Sending mail to: %s", message.To))
+
 	err := client.DialAndSend(compose_message(message))
+	log.Info().Msg(err.Error())
 	if err != nil {
 		log.Error().Err(err)
 	}
