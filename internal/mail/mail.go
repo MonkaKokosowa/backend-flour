@@ -18,6 +18,7 @@ type Message struct {
 	To      string
 	Subject string
 	Body    string
+	User    string
 }
 
 func LimitCharacters(input string, max int) string {
@@ -29,11 +30,10 @@ func LimitCharacters(input string, max int) string {
 
 func SendMail(client *gomail.Client, message Message) {
 	log.Info().Msg(fmt.Sprintf("Sending mail from: %s", message.From))
-	log.Info().Msg(fmt.Sprintf("Sending mail to: %s", message.To))
 
 	err := client.DialAndSend(compose_message(message))
-	log.Info().Msg(err.Error())
-	if err != nil {
+
+	if err.Error() != "" {
 		log.Error().Err(err)
 	}
 }
@@ -54,10 +54,9 @@ func GetClient(environment env.Environment) *gomail.Client {
 
 func compose_message(message Message) *gomail.Msg {
 	m := gomail.NewMsg()
-	m.SetAddrHeader(gomail.HeaderFrom, "Website Backend <"+message.To+">")
-	m.SetAddrHeader(gomail.HeaderTo, message.To)
+	m.SetAddrHeader(gomail.HeaderFrom, "Website Backend <"+message.User+">")
+	m.To(message.To)
 	m.Subject(message.Subject)
-	m.SetBodyString(gomail.TypeTextHTML, sanitize.HTML("Message from "+message.From.Name+" <"+message.From.Email+">"+"\n"+message.Body))
-	print(m)
+	m.SetBodyString(gomail.TypeTextPlain, sanitize.HTML("Message from "+message.From.Name+" <"+message.From.Email+">"+"\n"+message.Body))
 	return m
 }

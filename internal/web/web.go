@@ -61,6 +61,7 @@ func (a *App) mailHandler(w http.ResponseWriter, r *http.Request) {
 		To:      a.Env.Dialer.To,
 		Subject: fmt.Sprintf("New message from: %s", mail.LimitCharacters(mailRequest.Name, 50)),
 		Body:    mail.LimitCharacters(mailRequest.Message, 500),
+		User:    a.Env.Dialer.Username,
 	})
 
 }
